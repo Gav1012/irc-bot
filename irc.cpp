@@ -16,5 +16,24 @@ int main() {
     std::string botname =  "IRC-SampleBot";
     char buffer[4096];
 
+    SOCKET sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (sockfd == INVALID_SOCKET) {
+        std::cerr << "Error creating socket." << std::endl;
+        WSACleanup();
+        return 1;
+    }
+
+    struct sockaddr_in serverAddr;
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(port);
+    serverAddr.sin_addr.s_addr = inet_addr(server.c_str());
+
+    if (connect(sockfd, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
+        std::cerr << "Failed to connect to server." << std::endl;
+        closesocket(sockfd);
+        WSACleanup();
+        return 1;
+    }
+
     return 0;
 }
