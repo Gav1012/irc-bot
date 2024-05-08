@@ -35,5 +35,27 @@ int main() {
         return 1;
     }
 
+    std::string user = "USER " + botname + " " + botname + " " + botname + " :I am a bot!\r\n";
+    std::string nick = "NICK " + botname + "\r\n";
+    std::string join = "JOIN " + channel + "\r\n";
+
+    send(sockfd, user.c_str(), user.length(), 0);
+    send(sockfd, nick.c_str(), nick.length(), 0);
+    send(sockfd, join.c_str(), join.length(), 0);
+
+    while (true) {
+        recv(sockfd, buffer, 4096, 0);
+        std::cout << buffer;
+        if (strstr(buffer, "PING") != nullptr) {
+            std::string pong = "PONG " + std::string(buffer).substr(6) + "\r\n";
+            send(sockfd, pong.c_str(), pong.length(), 0);
+        }
+        memset(buffer, 0, sizeof(buffer));
+    }
+
+    closesocket(sockfd);
+    WSACleanup();
+
+
     return 0;
 }
